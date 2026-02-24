@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KH-Free QR Generator</title>
+
+<script src="qrcode.min.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    text-align:center;
+    padding-top:80px;
+    padding-bottom:100px; /* space for footer */
+    position:relative;
+}
+
+/* Top-left image */
+.top-left-logo{
+    position:absolute;
+    top:15px;
+    left:20px;
+    width:500px;
+    height:auto;
+}
+
+/* Bottom logo */
+.bottom-logo{
+    position:fixed;
+    top:25px;
+    right:10px;
+    transform:translateX(-50%);
+    width:200px;
+    height:auto;
+}
+
+/* Main container */
+.container{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:15px;
+}
+
+/* Inputs & buttons */
+input, button{
+    padding:10px;
+    font-size:16px;
+}
+
+button{
+    cursor:pointer;
+}
+
+#qrcode{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Top Left Flag -->
+<img src="khflag.jpg" class="top-left-logo">
+
+<div class="container">
+
+<h2>KH-Free QR Generator</h2>
+
+<input type="text" id="text" placeholder="Enter text here">
+
+<label>
+Background Color:
+<input type="color" id="bgColor" value="#ffffff">
+</label>
+
+<label>
+<input type="checkbox" id="transparentBg">
+ Transparent Background
+</label>
+
+<div>
+<button onclick="generateQR()">Generate</button>
+<button onclick="downloadQR()">Download</button>
+</div>
+
+<div id="qrcode"></div>
+
+</div>
+
+<!-- Bottom Logo -->
+<img src="nv logo.png" class="bottom-logo">
+
+<script>
+let qr;
+
+function generateQR(){
+    const text = document.getElementById("text").value.trim();
+    const bgColor = document.getElementById("bgColor").value;
+    const transparent = document.getElementById("transparentBg").checked;
+
+    if(text === ""){
+        alert("Please enter text first!");
+        return;
+    }
+
+    document.getElementById("qrcode").innerHTML = "";
+
+    qr = new QRCode(document.getElementById("qrcode"), {
+        text: text,
+        width: 220,
+        height: 220,
+        colorDark: "#000000",
+        colorLight: transparent ? "rgba(0,0,0,0)" : bgColor,
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+function downloadQR(){
+    const img = document.querySelector("#qrcode img") || 
+                document.querySelector("#qrcode canvas");
+
+    if(!img){
+        alert("Generate QR first!");
+        return;
+    }
+
+    let url;
+
+    if(img.tagName === "IMG"){
+        url = img.src;
+    }else{
+        url = img.toDataURL("image/png");
+    }
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "qr-code.png";
+    a.click();
+}
+</script>
+
+</body>
+</html>
